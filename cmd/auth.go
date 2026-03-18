@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -41,7 +40,7 @@ func init() {
 
 func runAuth(cmd *cobra.Command, args []string) error {
 	cfg := getOAuthConfig()
-	ctx := context.Background()
+	ctx := cmd.Context()
 
 	var token *auth.Token
 	var err error

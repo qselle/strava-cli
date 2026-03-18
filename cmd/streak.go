@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -43,7 +42,7 @@ type StreakResult struct {
 }
 
 func runStreak(cmd *cobra.Command, args []string) error {
-	ctx := context.Background()
+	ctx := cmd.Context()
 
 	token, err := auth.GetValidToken(ctx)
 	if err != nil {

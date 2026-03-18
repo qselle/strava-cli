@@ -19,12 +19,15 @@ Requires Go 1.22+.
 - `cmd/` — Cobra command definitions (thin wiring, calls into `internal/`)
 - `internal/auth/` — OAuth2 flow, token storage and refresh
 - `internal/api/` — Strava API HTTP client
-- `internal/server/` — MCP server wrapper (not yet implemented)
+- `internal/server/` — MCP server (get_activities, get_stats, get_streak)
+- `internal/format/` — Shared formatting helpers (Duration, Date, Motivation)
 
 ## Environment Variables
 
-- `STRAVA_CLIENT_ID` — required, from https://www.strava.com/settings/api
-- `STRAVA_CLIENT_SECRET` — required, same source
+- `STRAVA_CLIENT_ID` — required only during `strava-cli auth`
+- `STRAVA_CLIENT_SECRET` — required only during `strava-cli auth`
+
+After initial auth, credentials are stored in `~/.config/strava-cli/token.json`.
 
 ## Tokens
 
