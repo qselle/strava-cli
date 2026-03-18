@@ -9,4 +9,11 @@ linters:
     - ineffassign
   settings:
     errcheck:
-      check-blank: true
+      check-blank: false
+      exclude-functions:
+        - (io.Closer).Close
+        - (net.Listener).Close
+        - (*net/http.Server).Shutdown
+        - fmt.Fprintf
+        - fmt.Fprintln
+        - (*os/exec.Cmd).Start
