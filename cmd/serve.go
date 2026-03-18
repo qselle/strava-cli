@@ -26,8 +26,7 @@ func init() {
 }
 
 func runServe(cmd *cobra.Command, args []string) error {
-	cfg := getOAuthConfig()
-	s := server.NewServer(cfg)
+	s := server.NewServer()
 
 	if serveHTTP != "" {
 		handler := mcp.NewStreamableHTTPHandler(func(r *http.Request) *mcp.Server {

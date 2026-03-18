@@ -11,7 +11,7 @@ import (
 	"github.com/qselle/strava-cli/internal/auth"
 )
 
-func NewServer(cfg auth.OAuthConfig) *mcp.Server {
+func NewServer() *mcp.Server {
 	s := mcp.NewServer(&mcp.Implementation{
 		Name:    "strava-cli",
 		Version: "0.1.0",
@@ -20,17 +20,17 @@ func NewServer(cfg auth.OAuthConfig) *mcp.Server {
 	mcp.AddTool(s, &mcp.Tool{
 		Name:        "get_activities",
 		Description: "List recent Strava activities. Returns activity name, type, distance, duration, date, and more.",
-	}, makeGetActivities(cfg))
+	}, makeGetActivities())
 
 	mcp.AddTool(s, &mcp.Tool{
 		Name:        "get_stats",
 		Description: "Get athlete stats: recent, year-to-date, and all-time totals for runs, rides, and swims.",
-	}, makeGetStats(cfg))
+	}, makeGetStats())
 
 	mcp.AddTool(s, &mcp.Tool{
 		Name:        "get_streak",
 		Description: "Check the athlete's activity streak. Returns active days, rest days, current streak, and a motivational verdict. Use this to check if the user is moving their ass.",
-	}, makeGetStreak(cfg))
+	}, makeGetStreak())
 
 	return s
 }
@@ -55,9 +55,9 @@ type ActivitySummary struct {
 	Calories   float64 `json:"calories"`
 }
 
-func makeGetActivities(cfg auth.OAuthConfig) func(context.Context, *mcp.CallToolRequest, GetActivitiesInput) (*mcp.CallToolResult, GetActivitiesOutput, error) {
+func makeGetActivities() func(context.Context, *mcp.CallToolRequest, GetActivitiesInput) (*mcp.CallToolResult, GetActivitiesOutput, error) {
 	return func(ctx context.Context, req *mcp.CallToolRequest, input GetActivitiesInput) (*mcp.CallToolResult, GetActivitiesOutput, error) {
-		client, err := getClient(ctx, cfg)
+		client, err := getClient(ctx)
 		if err != nil {
 			return nil, GetActivitiesOutput{}, err
 		}
@@ -126,9 +126,9 @@ type TotalSummary struct {
 	ElevationM float64 `json:"elevation_m"`
 }
 
-func makeGetStats(cfg auth.OAuthConfig) func(context.Context, *mcp.CallToolRequest, GetStatsInput) (*mcp.CallToolResult, GetStatsOutput, error) {
+func makeGetStats() func(context.Context, *mcp.CallToolRequest, GetStatsInput) (*mcp.CallToolResult, GetStatsOutput, error) {
 	return func(ctx context.Context, req *mcp.CallToolRequest, input GetStatsInput) (*mcp.CallToolResult, GetStatsOutput, error) {
-		client, err := getClient(ctx, cfg)
+		client, err := getClient(ctx)
 		if err != nil {
 			return nil, GetStatsOutput{}, err
 		}
@@ -183,14 +183,14 @@ type GetStreakOutput struct {
 	Motivation    string   `json:"motivation"`
 }
 
-func makeGetStreak(cfg auth.OAuthConfig) func(context.Context, *mcp.CallToolRequest, GetStreakInput) (*mcp.CallToolResult, GetStreakOutput, error) {
+func makeGetStreak() func(context.Context, *mcp.CallToolRequest, GetStreakInput) (*mcp.CallToolResult, GetStreakOutput, error) {
 	return func(ctx context.Context, req *mcp.CallToolRequest, input GetStreakInput) (*mcp.CallToolResult, GetStreakOutput, error) {
 		days := input.Days
 		if days <= 0 {
 			days = 7
 		}
 
-		client, err := getClient(ctx, cfg)
+		client, err := getClient(ctx)
 		if err != nil {
 			return nil, GetStreakOutput{}, err
 		}
@@ -244,8 +244,8 @@ func makeGetStreak(cfg auth.OAuthConfig) func(context.Context, *mcp.CallToolRequ
 	}
 }
 
-func getClient(ctx context.Context, cfg auth.OAuthConfig) (*api.Client, error) {
-	token, err := auth.GetValidToken(ctx, cfg)
+func getClient(ctx context.Context) (*api.Client, error) {
+	token, err := auth.GetValidToken(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("not authenticated — run 'strava-cli auth' first: %w", err)
 	}

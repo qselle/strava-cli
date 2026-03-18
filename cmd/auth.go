@@ -54,6 +54,10 @@ func runAuth(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("authentication failed: %w", err)
 	}
 
+	// Store credentials alongside token for auto-refresh
+	token.ClientID = cfg.ClientID
+	token.ClientSecret = cfg.ClientSecret
+
 	if err := auth.SaveToken(token); err != nil {
 		return fmt.Errorf("saving token: %w", err)
 	}

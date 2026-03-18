@@ -13,22 +13,15 @@ Or download a binary from [Releases](https://github.com/qselle/strava-cli/releas
 ## Setup
 
 1. Create a Strava API application at https://www.strava.com/settings/api
-2. Set environment variables:
+2. Authenticate (one-time):
 
 ```bash
-export STRAVA_CLIENT_ID=your_client_id
-export STRAVA_CLIENT_SECRET=your_client_secret
+STRAVA_CLIENT_ID=your_client_id STRAVA_CLIENT_SECRET=your_client_secret strava-cli auth
 ```
 
-3. Authenticate:
+This prints a URL to open in your browser. Authorize the app, then paste the code back in the terminal. Credentials are stored locally — no env vars needed after this.
 
-```bash
-strava-cli auth
-```
-
-This prints a URL to open in your browser. Authorize the app, then paste the code back in the terminal.
-
-On a machine with a browser, use `strava-cli auth --browser` for automatic callback.
+On a machine with a browser, add `--browser` for automatic callback.
 
 ## Usage
 
@@ -80,11 +73,7 @@ Add to your MCP config:
   "mcpServers": {
     "strava": {
       "command": "strava-cli",
-      "args": ["serve"],
-      "env": {
-        "STRAVA_CLIENT_ID": "your_client_id",
-        "STRAVA_CLIENT_SECRET": "your_client_secret"
-      }
+      "args": ["serve"]
     }
   }
 }

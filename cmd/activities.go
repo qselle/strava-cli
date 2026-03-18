@@ -35,9 +35,8 @@ func init() {
 
 func runActivities(cmd *cobra.Command, args []string) error {
 	ctx := context.Background()
-	cfg := getOAuthConfig()
 
-	token, err := auth.GetValidToken(ctx, cfg)
+	token, err := auth.GetValidToken(ctx)
 	if err != nil {
 		return err
 	}

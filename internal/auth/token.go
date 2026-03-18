@@ -15,6 +15,8 @@ type Token struct {
 	ExpiresAt    int64  `json:"expires_at"`
 	TokenType    string `json:"token_type"`
 	AthleteID    int64  `json:"athlete_id,omitempty"`
+	ClientID     string `json:"client_id,omitempty"`
+	ClientSecret string `json:"client_secret,omitempty"`
 }
 
 func (t *Token) IsExpired() bool {
@@ -75,7 +77,8 @@ func LoadToken() (*Token, error) {
 }
 
 // GetValidToken loads the token and refreshes it if expired.
-func GetValidToken(ctx context.Context, cfg OAuthConfig) (*Token, error) {
+// Credentials for refresh are read from the stored token file.
+func GetValidToken(ctx context.Context) (*Token, error) {
 	token, err := LoadToken()
 	if err != nil {
 		return nil, err
@@ -85,16 +88,29 @@ func GetValidToken(ctx context.Context, cfg OAuthConfig) (*Token, error) {
 		return token, nil
 	}
 
-	token, err = RefreshAccessToken(ctx, cfg, token.RefreshToken)
+	if token.ClientID == "" || token.ClientSecret == "" {
+		return nil, fmt.Errorf("token expired and no client credentials stored — run 'strava-cli auth' again")
+	}
+
+	cfg := OAuthConfig{
+		ClientID:     token.ClientID,
+		ClientSecret: token.ClientSecret,
+	}
+
+	refreshed, err := RefreshAccessToken(ctx, cfg, token.RefreshToken)
 	if err != nil {
 		return nil, fmt.Errorf("token expired and refresh failed: %w", err)
 	}
 
-	if err := SaveToken(token); err != nil {
+	// Preserve stored credentials
+	refreshed.ClientID = token.ClientID
+	refreshed.ClientSecret = token.ClientSecret
+
+	if err := SaveToken(refreshed); err != nil {
 		return nil, fmt.Errorf("saving refreshed token: %w", err)
 	}
 
-	return token, nil
+	return refreshed, nil
 }
 
 func ClearToken() error {
