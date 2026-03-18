@@ -64,6 +64,8 @@ Use `--json` for structured output that agents can parse directly.
 
 Exposes three tools: `get_activities`, `get_stats`, and `get_streak`.
 
+You must authenticate first (see [Setup](#setup)), then start the server:
+
 ```bash
 strava-cli serve                # stdio transport
 strava-cli serve --http :8080   # HTTP/SSE transport
