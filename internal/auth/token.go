@@ -14,7 +14,6 @@ type Token struct {
 	RefreshToken string `json:"refresh_token"`
 	ExpiresAt    int64  `json:"expires_at"`
 	TokenType    string `json:"token_type"`
-	AthleteID    int64  `json:"athlete_id,omitempty"`
 	ClientID     string `json:"client_id,omitempty"`
 	ClientSecret string `json:"client_secret,omitempty"`
 }

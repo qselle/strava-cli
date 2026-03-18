@@ -63,7 +63,7 @@ func runAuth(cmd *cobra.Command, args []string) error {
 	}
 
 	if jsonOutput {
-		out := map[string]any{"status": "authenticated", "athlete_id": token.AthleteID}
+		out := map[string]any{"status": "authenticated"}
 		enc := json.NewEncoder(os.Stdout)
 		enc.SetIndent("", "  ")
 		return enc.Encode(out)
@@ -105,7 +105,6 @@ func runAuthStatus(cmd *cobra.Command, args []string) error {
 	if jsonOutput {
 		out := map[string]any{
 			"authenticated": true,
-			"athlete_id":    token.AthleteID,
 			"expired":       token.IsExpired(),
 		}
 		enc := json.NewEncoder(os.Stdout)
@@ -117,6 +116,6 @@ func runAuthStatus(cmd *cobra.Command, args []string) error {
 	if token.IsExpired() {
 		status = "expired (will auto-refresh)"
 	}
-	fmt.Printf("Authenticated (athlete ID: %d, token: %s)\n", token.AthleteID, status)
+	fmt.Printf("Authenticated (token: %s)\n", status)
 	return nil
 }

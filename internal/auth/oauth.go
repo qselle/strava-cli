@@ -157,27 +157,6 @@ func RefreshAccessToken(ctx context.Context, cfg OAuthConfig, refreshToken strin
 	return &token, nil
 }
 
-// tokenResponse matches Strava's token exchange response where athlete is nested.
-type tokenResponse struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-	ExpiresAt    int64  `json:"expires_at"`
-	TokenType    string `json:"token_type"`
-	Athlete      struct {
-		ID int64 `json:"id"`
-	} `json:"athlete"`
-}
-
-func (r *tokenResponse) toToken() *Token {
-	return &Token{
-		AccessToken:  r.AccessToken,
-		RefreshToken: r.RefreshToken,
-		ExpiresAt:    r.ExpiresAt,
-		TokenType:    r.TokenType,
-		AthleteID:    r.Athlete.ID,
-	}
-}
-
 func exchangeCode(ctx context.Context, cfg OAuthConfig, code, redirectURI string) (*Token, error) {
 	data := url.Values{
 		"client_id":     {cfg.ClientID},
@@ -202,12 +181,12 @@ func exchangeCode(ctx context.Context, cfg OAuthConfig, code, redirectURI string
 		return nil, fmt.Errorf("token exchange failed with status %d", resp.StatusCode)
 	}
 
-	var tokenResp tokenResponse
-	if err := json.NewDecoder(resp.Body).Decode(&tokenResp); err != nil {
+	var token Token
+	if err := json.NewDecoder(resp.Body).Decode(&token); err != nil {
 		return nil, fmt.Errorf("decoding token response: %w", err)
 	}
 
-	return tokenResp.toToken(), nil
+	return &token, nil
 }
 
 func buildAuthURL(clientID, redirectURI, state string) string {
