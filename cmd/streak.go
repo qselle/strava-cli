@@ -11,6 +11,7 @@ import (
 
 	"github.com/qselle/strava-cli/internal/api"
 	"github.com/qselle/strava-cli/internal/auth"
+	"github.com/qselle/strava-cli/internal/format"
 )
 
 var streakDays int
@@ -67,7 +68,7 @@ func runStreak(cmd *cobra.Command, args []string) error {
 	var totalTime int
 
 	for _, a := range activities {
-		date := formatDate(a.StartDateLocal)
+		date := format.Date(a.StartDateLocal)
 		activeDays[date] = true
 		totalDistance += a.Distance / 1000
 		totalTime += a.MovingTime
@@ -89,7 +90,7 @@ func runStreak(cmd *cobra.Command, args []string) error {
 	}
 
 	restDays := streakDays - len(activeDays)
-	verdict, motivation := getMotivation(len(activeDays), streakDays, currentStreak)
+	verdict, motivation := format.Motivation(len(activeDays), streakDays, currentStreak)
 
 	result := StreakResult{
 		Period:         fmt.Sprintf("last %d days", streakDays),
@@ -116,37 +117,9 @@ func runStreak(cmd *cobra.Command, args []string) error {
 	fmt.Printf("  Current streak: %d days\n", result.CurrentStreak)
 	fmt.Printf("  Activities:     %d\n", result.Activities)
 	fmt.Printf("  Total distance: %.1f km\n", result.TotalDistance)
-	fmt.Printf("  Total time:     %s\n\n", formatDuration(result.TotalTime))
+	fmt.Printf("  Total time:     %s\n\n", format.Duration(result.TotalTime))
 	fmt.Printf("  %s\n", result.Verdict)
 	fmt.Printf("  %s\n", result.Motivation)
 
 	return nil
-}
-
-func getMotivation(activeDays, totalDays, currentStreak int) (string, string) {
-	ratio := float64(activeDays) / float64(totalDays)
-
-	switch {
-	case activeDays == 0:
-		return "COUCH POTATO MODE",
-			"Your couch misses you... oh wait, you never left. Time to move!"
-	case ratio < 0.2:
-		return "BARELY ALIVE",
-			"One activity is better than none, but your shoes are getting dusty."
-	case ratio < 0.4:
-		return "WARMING UP",
-			"You're showing signs of life! Keep building that momentum."
-	case ratio < 0.6:
-		return "GETTING THERE",
-			"Solid effort! You're building a real habit here."
-	case ratio < 0.8:
-		return "CRUSHING IT",
-			"Beast mode activated! Your consistency is paying off."
-	case currentStreak >= totalDays:
-		return "ABSOLUTE LEGEND",
-			"Perfect streak! You haven't missed a single day. Unstoppable!"
-	default:
-		return "ON FIRE",
-			"You're on fire! Keep this up and nothing can stop you."
-	}
 }

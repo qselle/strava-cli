@@ -10,6 +10,7 @@ import (
 
 	"github.com/qselle/strava-cli/internal/api"
 	"github.com/qselle/strava-cli/internal/auth"
+	"github.com/qselle/strava-cli/internal/format"
 )
 
 var statsCmd = &cobra.Command{
@@ -55,15 +56,15 @@ func runStats(cmd *cobra.Command, args []string) error {
 		fmt.Printf("  %s:\n", label)
 		if run.Count > 0 {
 			fmt.Printf("    Run:  %3d activities  %8.1f km  %s  %5.0f m elevation\n",
-				run.Count, run.Distance/1000, formatDuration(run.MovingTime), run.ElevationGain)
+				run.Count, run.Distance/1000, format.Duration(run.MovingTime), run.ElevationGain)
 		}
 		if ride.Count > 0 {
 			fmt.Printf("    Ride: %3d activities  %8.1f km  %s  %5.0f m elevation\n",
-				ride.Count, ride.Distance/1000, formatDuration(ride.MovingTime), ride.ElevationGain)
+				ride.Count, ride.Distance/1000, format.Duration(ride.MovingTime), ride.ElevationGain)
 		}
 		if swim.Count > 0 {
 			fmt.Printf("    Swim: %3d activities  %8.1f km  %s\n",
-				swim.Count, swim.Distance/1000, formatDuration(swim.MovingTime))
+				swim.Count, swim.Distance/1000, format.Duration(swim.MovingTime))
 		}
 		if run.Count == 0 && ride.Count == 0 && swim.Count == 0 {
 			fmt.Printf("    No activities\n")

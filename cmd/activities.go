@@ -11,6 +11,7 @@ import (
 
 	"github.com/qselle/strava-cli/internal/api"
 	"github.com/qselle/strava-cli/internal/auth"
+	"github.com/qselle/strava-cli/internal/format"
 )
 
 var (
@@ -80,31 +81,11 @@ func runActivities(cmd *cobra.Command, args []string) error {
 	}
 
 	for _, a := range activities {
-		date := formatDate(a.StartDateLocal)
+		date := format.Date(a.StartDateLocal)
 		distance := a.Distance / 1000
-		duration := formatDuration(a.MovingTime)
+		duration := format.Duration(a.MovingTime)
 		fmt.Printf("  %s  %-12s  %6.1f km  %s  %s\n", date, a.SportType, distance, duration, a.Name)
 	}
 
 	return nil
-}
-
-func formatDuration(seconds int) string {
-	h := seconds / 3600
-	m := (seconds % 3600) / 60
-	if h > 0 {
-		return fmt.Sprintf("%dh%02dm", h, m)
-	}
-	return fmt.Sprintf("%dm", m)
-}
-
-func formatDate(dateStr string) string {
-	t, err := time.Parse(time.RFC3339, dateStr)
-	if err != nil {
-		t, err = time.Parse("2006-01-02T15:04:05Z", dateStr)
-		if err != nil {
-			return dateStr[:10]
-		}
-	}
-	return t.Format("2006-01-02")
 }

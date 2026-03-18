@@ -12,7 +12,7 @@ import (
 var jsonOutput bool
 
 var rootCmd = &cobra.Command{
-	Use:   "strava",
+	Use:   "strava-cli",
 	Short: "Strava CLI — check your activities, stats, and streaks",
 	Long:  "A command-line interface and MCP server for the Strava API.\nTrack your activities, monitor your streak, and let your AI agents keep you accountable.",
 }

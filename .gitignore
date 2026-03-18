@@ -2,3 +2,5 @@ bin/
 dist/
 coverage.out
 *.exe
+token.json
+.DS_Store

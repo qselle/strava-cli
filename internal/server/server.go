@@ -9,6 +9,7 @@ import (
 
 	"github.com/qselle/strava-cli/internal/api"
 	"github.com/qselle/strava-cli/internal/auth"
+	"github.com/qselle/strava-cli/internal/format"
 )
 
 func NewServer() *mcp.Server {
@@ -94,8 +95,8 @@ func makeGetActivities() func(context.Context, *mcp.CallToolRequest, GetActiviti
 				Name:       a.Name,
 				Type:       a.SportType,
 				DistanceKm: a.Distance / 1000,
-				Duration:   formatDuration(a.MovingTime),
-				Date:       a.StartDateLocal[:10],
+				Duration:   format.Duration(a.MovingTime),
+				Date:       format.Date(a.StartDateLocal),
 				Elevation:  a.TotalElevationGain,
 				Calories:   a.Calories,
 			}
@@ -147,7 +148,7 @@ func makeGetStats() func(context.Context, *mcp.CallToolRequest, GetStatsInput) (
 			return TotalSummary{
 				Count:      t.Count,
 				DistanceKm: t.Distance / 1000,
-				Duration:   formatDuration(t.MovingTime),
+				Duration:   format.Duration(t.MovingTime),
 				ElevationM: t.ElevationGain,
 			}
 		}
@@ -211,7 +212,7 @@ func makeGetStreak() func(context.Context, *mcp.CallToolRequest, GetStreakInput)
 		var totalTime int
 
 		for _, a := range activities {
-			date := a.StartDateLocal[:10]
+			date := format.Date(a.StartDateLocal)
 			activeDays[date] = true
 			totalDistance += a.Distance / 1000
 			totalTime += a.MovingTime
@@ -227,7 +228,7 @@ func makeGetStreak() func(context.Context, *mcp.CallToolRequest, GetStreakInput)
 			}
 		}
 
-		verdict, motivation := getMotivation(len(activeDays), days, currentStreak)
+		verdict, motivation := format.Motivation(len(activeDays), days, currentStreak)
 
 		return nil, GetStreakOutput{
 			Period:        fmt.Sprintf("last %d days", days),
@@ -236,7 +237,7 @@ func makeGetStreak() func(context.Context, *mcp.CallToolRequest, GetStreakInput)
 			RestDays:      days - len(activeDays),
 			CurrentStreak: currentStreak,
 			TotalDistance:  totalDistance,
-			TotalTime:     formatDuration(totalTime),
+			TotalTime:     format.Duration(totalTime),
 			Activities:    len(activities),
 			Verdict:       verdict,
 			Motivation:    motivation,
@@ -250,41 +251,4 @@ func getClient(ctx context.Context) (*api.Client, error) {
 		return nil, fmt.Errorf("not authenticated — run 'strava-cli auth' first: %w", err)
 	}
 	return api.NewClient(token.AccessToken), nil
-}
-
-func formatDuration(seconds int) string {
-	h := seconds / 3600
-	m := (seconds % 3600) / 60
-	if h > 0 {
-		return fmt.Sprintf("%dh%02dm", h, m)
-	}
-	return fmt.Sprintf("%dm", m)
-}
-
-func getMotivation(activeDays, totalDays, currentStreak int) (string, string) {
-	ratio := float64(activeDays) / float64(totalDays)
-
-	switch {
-	case activeDays == 0:
-		return "COUCH POTATO MODE",
-			"Your couch misses you... oh wait, you never left. Time to move!"
-	case ratio < 0.2:
-		return "BARELY ALIVE",
-			"One activity is better than none, but your shoes are getting dusty."
-	case ratio < 0.4:
-		return "WARMING UP",
-			"You're showing signs of life! Keep building that momentum."
-	case ratio < 0.6:
-		return "GETTING THERE",
-			"Solid effort! You're building a real habit here."
-	case ratio < 0.8:
-		return "CRUSHING IT",
-			"Beast mode activated! Your consistency is paying off."
-	case currentStreak >= totalDays:
-		return "ABSOLUTE LEGEND",
-			"Perfect streak! You haven't missed a single day. Unstoppable!"
-	default:
-		return "ON FIRE",
-			"You're on fire! Keep this up and nothing can stop you."
-	}
 }
