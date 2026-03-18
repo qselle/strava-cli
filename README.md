@@ -19,9 +19,9 @@ Or download a binary from [Releases](https://github.com/qselle/strava-cli/releas
 STRAVA_CLIENT_ID=your_client_id STRAVA_CLIENT_SECRET=your_client_secret strava-cli auth
 ```
 
-This prints a URL to open in your browser. Authorize the app, then paste the code back in the terminal. Credentials are stored locally — no env vars needed after this.
+This opens your browser for Strava authorization. Credentials are stored locally — no env vars needed after this.
 
-On a machine with a browser, add `--browser` for automatic callback.
+On headless servers, add `--manual` to paste the authorization code manually.
 
 ## Usage
 

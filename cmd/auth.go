@@ -11,12 +11,12 @@ import (
 	"github.com/qselle/strava-cli/internal/auth"
 )
 
-var authBrowser bool
+var authManual bool
 
 var authCmd = &cobra.Command{
 	Use:   "auth",
 	Short: "Authenticate with Strava",
-	Long:  "Log in to Strava via OAuth2.\nBy default, prints a URL to open manually and waits for you to paste the code.\nUse --browser on machines with a browser for automatic callback.",
+	Long:  "Log in to Strava via OAuth2.\nBy default, opens your browser for authorization.\nUse --manual on headless servers to paste the code manually.",
 	RunE:  runAuth,
 }
 
@@ -33,7 +33,7 @@ var statusCmd = &cobra.Command{
 }
 
 func init() {
-	authCmd.Flags().BoolVar(&authBrowser, "browser", false, "Use browser-based callback (requires local browser)")
+	authCmd.Flags().BoolVar(&authManual, "manual", false, "Manually paste the authorization code (for headless servers)")
 	authCmd.AddCommand(logoutCmd)
 	authCmd.AddCommand(statusCmd)
 	rootCmd.AddCommand(authCmd)
@@ -45,10 +45,10 @@ func runAuth(cmd *cobra.Command, args []string) error {
 
 	var token *auth.Token
 	var err error
-	if authBrowser {
-		token, err = auth.LoginBrowser(ctx, cfg)
-	} else {
+	if authManual {
 		token, err = auth.LoginManual(ctx, cfg)
+	} else {
+		token, err = auth.LoginBrowser(ctx, cfg)
 	}
 	if err != nil {
 		return fmt.Errorf("authentication failed: %w", err)
