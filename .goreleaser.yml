@@ -2,7 +2,7 @@ version: 2
 
 builds:
   - main: .
-    binary: strava
+    binary: strava-cli
     env:
       - CGO_ENABLED=0
     ldflags:

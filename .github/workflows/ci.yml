@@ -54,8 +54,8 @@ jobs:
         run: |
           EXT=""
           if [ "$GOOS" = "windows" ]; then EXT=".exe"; fi
-          go build -ldflags "-s -w" -o bin/strava-${GOOS}-${GOARCH}${EXT} .
+          go build -ldflags "-s -w" -o bin/strava-cli-${GOOS}-${GOARCH}${EXT} .
       - uses: actions/upload-artifact@v4
         with:
-          name: strava-${{ matrix.goos }}-${{ matrix.goarch }}
+          name: strava-cli-${{ matrix.goos }}-${{ matrix.goarch }}
           path: bin/
