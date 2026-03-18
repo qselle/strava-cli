@@ -1,15 +1,12 @@
+version: "2"
+
 linters:
   enable:
     - errcheck
     - govet
     - staticcheck
     - unused
-    - gosimple
     - ineffassign
-
-linters-settings:
-  errcheck:
-    check-blank: true
-
-issues:
-  exclude-use-default: true
+  settings:
+    errcheck:
+      check-blank: true
