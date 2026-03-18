@@ -62,12 +62,31 @@ Use `--json` for structured output that agents can parse directly.
 
 ## MCP Server
 
+Exposes three tools: `get_activities`, `get_stats`, and `get_streak`.
+
 ```bash
-strava-cli serve           # stdio transport
-strava-cli serve --http :8080  # HTTP/SSE transport
+strava-cli serve                # stdio transport
+strava-cli serve --http :8080   # HTTP/SSE transport
 ```
 
-> MCP server is not yet implemented. Coming soon.
+### Claude Code / Claude Desktop
+
+Add to your MCP config:
+
+```json
+{
+  "mcpServers": {
+    "strava": {
+      "command": "strava-cli",
+      "args": ["serve"],
+      "env": {
+        "STRAVA_CLIENT_ID": "your_client_id",
+        "STRAVA_CLIENT_SECRET": "your_client_secret"
+      }
+    }
+  }
+}
+```
 
 ## Development
 

@@ -1,9 +1,14 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"net/http"
 
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/spf13/cobra"
+
+	"github.com/qselle/strava-cli/internal/server"
 )
 
 var serveHTTP string
@@ -21,8 +26,16 @@ func init() {
 }
 
 func runServe(cmd *cobra.Command, args []string) error {
-	// TODO: implement MCP server using modelcontextprotocol/go-sdk
-	fmt.Println("MCP server not yet implemented. Coming soon!")
-	fmt.Println("Track progress at https://github.com/qselle/strava-cli")
-	return nil
+	cfg := getOAuthConfig()
+	s := server.NewServer(cfg)
+
+	if serveHTTP != "" {
+		handler := mcp.NewStreamableHTTPHandler(func(r *http.Request) *mcp.Server {
+			return s
+		}, nil)
+		fmt.Fprintf(cmd.ErrOrStderr(), "Starting MCP server on %s\n", serveHTTP)
+		return http.ListenAndServe(serveHTTP, handler)
+	}
+
+	return s.Run(context.Background(), &mcp.StdioTransport{})
 }
