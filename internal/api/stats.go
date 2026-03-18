@@ -6,12 +6,12 @@ import (
 )
 
 type ActivityTotal struct {
-	Count         int     `json:"count"`
-	Distance      float64 `json:"distance"`
-	MovingTime    int     `json:"moving_time"`
-	ElapsedTime   int     `json:"elapsed_time"`
-	ElevationGain float64 `json:"elevation_gain"`
-	AchievementCount int  `json:"achievement_count,omitempty"`
+	Count            int     `json:"count"`
+	Distance         float64 `json:"distance"`
+	MovingTime       float64 `json:"moving_time"`
+	ElapsedTime      float64 `json:"elapsed_time"`
+	ElevationGain    float64 `json:"elevation_gain"`
+	AchievementCount int     `json:"achievement_count,omitempty"`
 }
 
 type Stats struct {

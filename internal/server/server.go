@@ -209,7 +209,7 @@ func makeGetStreak() func(context.Context, *mcp.CallToolRequest, GetStreakInput)
 
 		activeDays := make(map[string]bool)
 		var totalDistance float64
-		var totalTime int
+		var totalTime float64
 
 		for _, a := range activities {
 			date := format.Date(a.StartDateLocal)

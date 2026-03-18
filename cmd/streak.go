@@ -34,7 +34,7 @@ type StreakResult struct {
 	RestDays       int      `json:"rest_days"`
 	CurrentStreak  int      `json:"current_streak"`
 	TotalDistance   float64  `json:"total_distance_km"`
-	TotalTime      int      `json:"total_time_seconds"`
+	TotalTime      float64  `json:"total_time_seconds"`
 	Activities     int      `json:"activities"`
 	ActiveDaysList []string `json:"active_days_list"`
 	Verdict        string   `json:"verdict"`
@@ -64,7 +64,7 @@ func runStreak(cmd *cobra.Command, args []string) error {
 
 	activeDays := make(map[string]bool)
 	var totalDistance float64
-	var totalTime int
+	var totalTime float64
 
 	for _, a := range activities {
 		date := format.Date(a.StartDateLocal)

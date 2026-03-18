@@ -6,9 +6,10 @@ import (
 )
 
 // Duration formats seconds into a human-readable duration string.
-func Duration(seconds int) string {
-	h := seconds / 3600
-	m := (seconds % 3600) / 60
+func Duration(seconds float64) string {
+	s := int(seconds)
+	h := s / 3600
+	m := (s % 3600) / 60
 	if h > 0 {
 		return fmt.Sprintf("%dh%02dm", h, m)
 	}
