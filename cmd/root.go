@@ -17,6 +17,10 @@ var rootCmd = &cobra.Command{
 	Long:  "A command-line interface and MCP server for the Strava API.\nTrack your activities, monitor your streak, and let your AI agents keep you accountable.",
 }
 
+func SetVersion(v string) {
+	rootCmd.Version = v
+}
+
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
